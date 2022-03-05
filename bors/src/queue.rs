@@ -70,7 +70,7 @@ impl MergeQueue {
         let mut pull = pulls.get_mut(&head).expect("PR should exist");
         let merge_oid = match &pull.status {
             Status::Testing { merge_oid, .. } => merge_oid,
-            // XXX Fix this
+            // TODO Fix this
             _ => unreachable!(),
         };
 
@@ -328,7 +328,7 @@ impl MergeQueue {
         match test_suite_result {
             TestSuiteResult::Failed { .. } | TestSuiteResult::TimedOut => {
                 // Remove the PR from the Queue
-                // XXX Maybe mark as "Failed"?
+                // TODO Maybe mark as "Failed"?
                 pull.update_status(Status::InReview, config, github, project_board)
                     .await?;
                 self.head.take();
