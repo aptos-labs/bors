@@ -45,20 +45,11 @@ impl CommandType {
 }
 
 impl Command {
+    /// Add comment command e.g. /land
     pub fn from_comment(c: &str) -> Option<Result<Self, ParseCommandError>> {
         c.lines()
             .find(|line| line.starts_with('/'))
             .map(Self::from_line)
-    }
-
-    #[allow(dead_code)]
-    pub fn from_comment_with_username(
-        c: &str,
-        my_username: &str,
-    ) -> Option<Result<Self, ParseCommandError>> {
-        c.lines()
-            .find(|line| Self::line_starts_with_username(line, my_username))
-            .map(|line| Self::from_line_with_username(line, my_username))
     }
 
     fn from_line_with_username(s: &str, my_username: &str) -> Result<Self, ParseCommandError> {

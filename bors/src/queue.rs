@@ -10,15 +10,16 @@ use github::Oid;
 use log::info;
 use std::{collections::HashMap, time::Instant};
 
+/// An entry representing the state of a PR in the bors queue
 #[derive(Debug, PartialEq, PartialOrd, Eq, Ord)]
 pub struct QueueEntry {
+    /// Current state of the PR
     status: StatusType,
-
     /// Indicates the priority of the PR
     priority: Priority,
-
+    /// Queue insertion timestamp
     timestamp: Option<Instant>,
-
+    /// PR Number
     number: u64,
 }
 
