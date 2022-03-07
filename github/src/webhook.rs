@@ -14,7 +14,8 @@ pub const DELIVERY_ID_HEADER: &str = "X-Github-Delivery";
 /// The GitHub header key used to pass the HMAC hexdigest
 ///
 /// Github API docs: https://developer.github.com/webhooks/#delivery-headers
-pub const SIGNATURE_HEADER: &str = "X-Hub-Signature";
+pub const SIGNATURE_HEADER: &str = "X-Hub-Signature-256";
+pub const SIGNATURE_PREFIX: &str = "sha256=";
 
 #[derive(Clone, Debug)]
 pub struct Webhook {
@@ -27,15 +28,15 @@ pub struct Webhook {
 impl Webhook {
     pub fn check_signature(&self, key: Option<&[u8]>) -> bool {
         match (key, &self.signature) {
-            (Some(key), Some(signature)) if signature.starts_with("sha1=") => {
-                let hash = hex::encode(hmacsha1::hmac_sha1(key, &self.body));
-                let signature = &signature["sha1=".len()..];
+            (Some(key), Some(signature)) if signature.starts_with(SIGNATURE_PREFIX) => {
+                let hash = hex::encode(hmac_sha256::HMAC::mac(key, &self.body));
+                let signature = &signature[SIGNATURE_PREFIX.len()..];
 
                 trace!("hash: {}", hash);
                 trace!("sig:  {}", signature);
                 hash == signature
             }
-            // We are expecting a signature and we either recieved it in a different format than
+            // We are expecting a signature and we either received it in a different format than
             // expected or no signature was sent.
             (Some(_), _) => false,
             // No key or signature to check
