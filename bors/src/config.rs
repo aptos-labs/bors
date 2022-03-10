@@ -110,12 +110,17 @@ impl RepoConfig {
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(rename_all = "kebab-case")]
 pub struct Labels {
+    do_not_land: Option<String>,
     squash: Option<String>,
     high_priority: Option<String>,
     low_priority: Option<String>,
 }
 
 impl Labels {
+    pub fn do_not_land(&self) -> &str {
+        self.do_not_land.as_deref().unwrap_or("bors-do-not-land")
+    }
+
     pub fn squash(&self) -> &str {
         self.squash.as_deref().unwrap_or("bors-squash")
     }

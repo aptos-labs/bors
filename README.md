@@ -117,3 +117,4 @@ Options for Pull Requests are configured through the application of labels.
 | ![label: bors-high-priority](https://img.shields.io/static/v1?label=&message=bors-high-priority&color=lightgrey) | Indicates that the PR is high-priority. When queued the PR will be placed at the head of the merge queue. |
 | ![label: bors-low-priority](https://img.shields.io/static/v1?label=&message=bors-low-priority&color=lightgrey) | Indicates that the PR is low-priority. When queued the PR will be placed at the back of the merge queue. |
 | ![label: bors-squash](https://img.shields.io/static/v1?label=&message=bors-squash&color=lightgrey) | Before merging the PR will be squashed down to a single commit, only retaining the commit message of the first commit in the PR. |
+| ![label: bors-do-not-land](https://img.shields.io/static/v1?label=&message=bors-do-not-land&color=lightgrey) | Prevents landing of the PR

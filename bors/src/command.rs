@@ -247,6 +247,23 @@ impl Command {
         Ok(())
     }
 
+    async fn set_do_not_land(
+        ctx: &mut ActivePullRequestContext<'_>,
+        do_not_land: bool,
+    ) -> Result<()> {
+        info!("#{}: set do_not_land to {}", ctx.pr().number, do_not_land);
+
+        let label = ctx.config().labels().do_not_land().to_owned();
+
+        if do_not_land {
+            ctx.set_label(&label).await?;
+        } else {
+            ctx.remove_label(&label).await?;
+        }
+
+        Ok(())
+    }
+
     async fn set_squash(ctx: &mut ActivePullRequestContext<'_>, squash: bool) -> Result<()> {
         info!("#{}: set squash to {}", ctx.pr().number, squash);
 
@@ -268,6 +285,15 @@ impl Command {
         if ctx.pr().is_draft() {
             ctx.create_pr_comment(
                 ":clipboard: Looks like this PR is still in progress, unable to queue for landing",
+            )
+            .await?;
+            return Ok(());
+        }
+
+        // If marked as do not land, don't continue
+        if ctx.pr().has_label(ctx.config().labels().do_not_land()) {
+            ctx.create_pr_comment(
+                ":heavy_exclamation_mark: This PR has been marked do_not_land and can't be landed",
             )
             .await?;
             return Ok(());
@@ -624,6 +650,12 @@ impl std::fmt::Display for Help<'_> {
             name = self.config.labels().squash(),
             desc = "Before merging the PR will be squashed down to a single commit, \
             only retaining the commit message of the first commit in the PR.",
+        )?;
+        writeln!(
+            f,
+            "| ![label: {name}](https://img.shields.io/static/v1?label=&message={name}&color=lightgrey) | {desc} |",
+            name = self.config.labels().do_not_land(),
+            desc = "Prevents this PR from being landed",
         )?;
 
         writeln!(f)?;
